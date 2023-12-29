@@ -10,13 +10,16 @@ import requests
 from dotenv import load_dotenv
 from flask import Flask, render_template, request
 from keras import models
+from keras.models import Model, model_from_json
 from PIL import Image
-
 from resUnit import ResUnit
 
 app = Flask(__name__, static_url_path='/assets')
 
-model = models.load_model('model.keras', custom_objects={"ResUnit":ResUnit})
+# model = models.load_model('model.keras', custom_objects={"ResUnit":ResUnit})
+json_config = open('model.json').read()
+model:Model = model_from_json(json_config, custom_objects={'ResUnit': ResUnit})
+load_status = model.load_weights("model_weights.hdf5")
 f = open('classes.json')
 class_names = json.load(f)
 f.close()
